@@ -129,10 +129,12 @@ export default function ConsentNotice() {
           <section ref={noticeRef} className="consent" aria-labelledby="consent-title">
             <div className="wrap">
               <div className="consent-text">
-                <h2 id="consent-title">May we count your visit?</h2>
+                <h2 id="consent-title">May we count your visits?</h2>
                 <p>
-                  We would use analytics to see which pages people read and how they find this
-                  site. Read about{" "}
+                  We would use Vercel Web Analytics to see which pages people read and how they
+                  find this site. We keep your answer in a cookie for up to 180 days. You can
+                  change it at any time with Cookie settings, at the foot of every page. Read
+                  about{" "}
                   {/* A plain link, as in the footer: the privacy notice opens at its cookies part. */}
                   <a className="link" href="/privacy/#cookies">
                     cookies and analytics

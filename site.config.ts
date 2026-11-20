@@ -37,4 +37,4 @@ export const site = {
 };
 
 export const siteDescription =
-  "Lascel is a small software company in Birmingham. It is the company behind VAYRENO, which handles patient enquiries and bookings for UK private clinics.";
+  "Lascel is a small software engineering company in Birmingham. It builds and runs VAYRENO, which handles patient enquiries and bookings for UK private clinics. More products are planned.";

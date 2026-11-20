@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { site, siteDescription } from "@/site.config";
 
-export const homeTitle = `${site.name} | The software company behind ${site.vayreno.name}`;
+export const homeTitle = `${site.name} | The software engineering company behind ${site.vayreno.name}`;
 
 /** The picture shown when a link to the site is shared: public/og.png, 1200 by 630 pixels. */
 export const shareImage = {
@@ -9,7 +9,7 @@ export const shareImage = {
   width: 1200,
   height: 630,
   type: "image/png",
-  alt: `${site.name}, the software company behind ${site.vayreno.name}.`,
+  alt: `${site.name}, the software engineering company behind ${site.vayreno.name}.`,
 };
 
 type Page = {

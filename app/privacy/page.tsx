@@ -55,7 +55,7 @@ export default function Privacy() {
       <div className="prose">
         <h2>Who we are</h2>
         <p>
-          This website is run by {site.name}, a small software company in {site.location}.{" "}
+          This website is run by {site.name}, a small software engineering company in {site.location}.{" "}
           {site.contactEmail ? (
             <>
               You can contact us at <EmailLink email={site.contactEmail} />.

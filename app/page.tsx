@@ -48,11 +48,11 @@ export default function Home() {
       <div className="wrap">
         <section className="hero">
           <h1>
-            The software company behind <Vayreno />.
+            The software engineering company behind <Vayreno />.
           </h1>
           <p className="lede">
-            {site.name} is a small, new company based in {site.location}. <Vayreno /> is the one
-            product we make.
+            {site.name} is a small, new software engineering company based in {site.location}. We
+            build and run <Vayreno />, our first product, and we plan to build more.
           </p>
         </section>
 

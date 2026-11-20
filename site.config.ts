@@ -6,7 +6,7 @@ export const site = {
   name: "Lascel",
   /** The address the site is published at. Used for canonical links, the sitemap and share images. */
   url: "https://www.lascel.com",
-  location: "Birmingham, United Kingdom",
+  location: "London, United Kingdom",
 
   /**
    * The public contact address. Use a mailbox that someone reads.
@@ -37,4 +37,4 @@ export const site = {
 };
 
 export const siteDescription =
-  "Lascel is a small software engineering company in Birmingham. It builds and runs VAYRENO, which handles patient enquiries and bookings for UK private clinics. More products are planned.";
+  "Lascel is a small software engineering company in London. VAYRENO, a division of Lascel, handles patient enquiries and bookings for UK private clinics. More products are planned.";

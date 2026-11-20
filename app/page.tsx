@@ -51,8 +51,8 @@ export default function Home() {
             The software engineering company behind <Vayreno />.
           </h1>
           <p className="lede">
-            {site.name} is a small, new software engineering company based in {site.location}. We
-            build and run <Vayreno />, our first product, and we plan to build more.
+            {site.name} is a small, new software engineering company based in {site.location}.{" "}
+            <Vayreno /> is a division of {site.name} and our first product. We plan to build more.
           </p>
         </section>
 

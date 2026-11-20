@@ -1,6 +1,6 @@
 # Lascel
 
-The website of Lascel, the software engineering company that builds and runs [VAYRENO](https://vayreno.co.uk). It is published at https://www.lascel.com.
+The website of Lascel, a software engineering company in London. [VAYRENO](https://vayreno.co.uk) is a division of Lascel. It is published at https://www.lascel.com.
 
 The site is two pages and a 404 page:
 

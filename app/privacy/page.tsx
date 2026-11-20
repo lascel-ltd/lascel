@@ -81,9 +81,13 @@ export default function Privacy() {
 
         <h2>Hosting</h2>
         <p>
-          The site is hosted on GitHub Pages, a service of GitHub. GitHub logs the IP address of
-          everyone who visits a GitHub Pages site and keeps it for security purposes. We do not
-          receive those logs.
+          The site is hosted by Vercel. To deliver the site and keep it secure, Vercel processes the
+          IP address of everyone who visits, the approximate location that address suggests, and
+          technical details of the browser and device. Vercel keeps technical records of visits. We
+          can see those records in our hosting account, and we use them only to keep the site
+          working and secure. Vercel is a company in the United States, so this information may be
+          processed outside the United Kingdom. Vercel&apos;s data processing terms include the
+          contractual safeguards that UK data protection law provides for such transfers.
         </p>
 
         <h2>If you email us</h2>

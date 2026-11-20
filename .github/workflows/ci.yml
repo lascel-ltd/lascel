@@ -1,0 +1,47 @@
+name: Build check
+
+# Pull requests to main and pushes to main: install, lint, type-check and build.
+# This workflow publishes nothing. The site is hosted on Vercel (see README, "How it is published").
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Lint, type-check and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      # A newer commit on the same pull request cancels the older run.
+      group: build-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Build the static site
+        run: npm run build

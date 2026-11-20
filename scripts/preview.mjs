@@ -1,4 +1,4 @@
-// Serves the static build in out/ the way GitHub Pages does, for checking it locally.
+// Serves the static build in out/ the way a static host does, for checking it locally.
 // Usage: npm run build && npm run preview   (PORT=5000 npm run preview for another port)
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";

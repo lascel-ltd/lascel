@@ -1,6 +1,6 @@
 /**
  * The values on the site that may need changing, in one place.
- * Edit this file, commit and push to main: the site is rebuilt and published.
+ * Edit this file, commit and push to main, then publish (README, "How it is published").
  */
 export const site = {
   name: "Lascel",

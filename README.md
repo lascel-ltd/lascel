@@ -15,7 +15,7 @@ It is a fully static build. There is no server, no form, no cookie, no analytics
 - Tailwind CSS 4 for the CSS reset and build; the design lives in `app/globals.css`
 - `next/font/google` for the self-hosted font
 - ESLint 9 with `eslint-config-next`
-- GitHub Actions and GitHub Pages for publishing
+- Vercel for hosting, and GitHub Actions for the build check
 
 ## Run it locally
 
@@ -32,7 +32,7 @@ Then open the address `next dev` prints.
 | --- | --- |
 | `npm run dev` | Start the development server |
 | `npm run build` | Build the static site into `out/` |
-| `npm run preview` | Serve `out/` on http://127.0.0.1:4173 the way GitHub Pages does (`PORT=5000 npm run preview` for another port) |
+| `npm run preview` | Serve `out/` on http://127.0.0.1:4173 the way a static host does (`PORT=5000 npm run preview` for another port) |
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | Generate route types and run the TypeScript compiler |
 
@@ -49,42 +49,32 @@ Both live in `site.config.ts`:
 - `registeredDetails` is `null` until the company is registered. When it is, set it to one line with the registered name, where it is registered, the company number and the registered office. The footer shows that line on every page as soon as it is set, and not before.
 - `lastUpdated` is the date shown on the privacy notice and used in the sitemap. Change it whenever the privacy notice changes.
 
-Commit and push to `main`, and the site is rebuilt and published.
+Commit and push to `main`, then publish as described below.
 
 ## How it is published
 
-`.github/workflows/deploy.yml` runs on GitHub Actions:
+The site is hosted on Vercel, in the project `lascel` of the team that also hosts VAYRENO's sites. Vercel builds it with `next build`. Because of `output: "export"` the result is plain files, with no server code.
 
-1. On every pull request to `main`, it installs the dependencies, then runs `npm run lint`, `npm run typecheck` and `npm run build`.
-2. On every push to `main` (and when run by hand from the Actions tab on `main`), it does the same, uploads `out/` with `actions/upload-pages-artifact`, and publishes it with `actions/configure-pages` and `actions/deploy-pages`.
+- **Until the repository is connected to the Vercel project**, publish by hand from a machine signed in to that Vercel team: run `npx vercel deploy --prod` in this folder. The folder is linked to the project with `npx vercel link`, which writes the git-ignored `.vercel/` folder.
+- **Once the repository is connected** (Vercel project > Settings > Git, after Vercel's GitHub app is installed for the `lascel-ltd` organisation), Vercel builds and publishes every push to `main` by itself and gives every pull request a preview address.
 
-It uses no secrets and no server.
+`.github/workflows/ci.yml` runs on GitHub Actions for every pull request to `main` and every push to `main`. It installs the dependencies, then runs `npm run lint`, `npm run typecheck` and `npm run build`. It publishes nothing and uses no secrets.
 
-`public/.nojekyll` stops GitHub's Jekyll step from hiding the `_next` folder if the site is ever published from a branch instead of from Actions.
+`vercel.json` adds three response headers to every page: no content-type sniffing, a strict referrer policy and no framing.
 
-### Moving the domain to GitHub Pages
+### The domain
 
-The domain's DNS is on Cloudflare. Until the switch, `www.lascel.com` and `lascel.com` point at a Vercel project. Do these steps once, in this order:
+The domain's DNS is on Cloudflare. `www.lascel.com` is a `CNAME` record to the address Vercel gave for the project, and the bare domain has Vercel's two `A` records. Vercel redirects `lascel.com` to `www.lascel.com` and issues the HTTPS certificates.
 
-1. **Before merging to `main`**, in the repository's Settings > Pages, set Source to **GitHub Actions**. Until this is set, the publish job fails at `actions/configure-pages`.
-2. **Verify the domain for the organisation.** In the `lascel-ltd` organisation's Settings > Pages, add `lascel.com` as a verified domain. GitHub shows a `TXT` record named `_github-pages-challenge-lascel-ltd` and its value. Add that record at Cloudflare, then press Verify. This stops another GitHub account from publishing a site on the domain.
-3. **Set the custom domain.** In the repository's Settings > Pages, set the custom domain to `www.lascel.com`. (`public/CNAME` holds the same domain, so a copy of the site published from a branch would also keep it.)
-4. **Change the DNS at Cloudflare.** Replace the Vercel records. Do not add to them.
-   - `www`: one `CNAME` record to `lascel-ltd.github.io`.
-   - The bare domain: four `A` records, `185.199.108.153`, `185.199.109.153`, `185.199.110.153` and `185.199.111.153`, and four `AAAA` records, `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153` and `2606:50c0:8003::153`. Check them against GitHub's custom domain guide when you make the change.
-   - Set every one of these records to **DNS only** (grey cloud), not Proxied. Cloudflare creates new records as Proxied unless told otherwise. A proxied record stops GitHub from issuing the HTTPS certificate, and puts Cloudflare between visitors and the site, which would make the privacy notice untrue.
-   - Leave the `MX` and `TXT` records (email and domain verification) as they are.
-5. **Turn on HTTPS.** Once GitHub has issued the certificate, tick Enforce HTTPS in Settings > Pages. GitHub redirects `lascel.com` to `www.lascel.com`.
-6. **Check the site at https://www.lascel.com only.** GitHub also serves a copy at `lascel-ltd.github.io/lascel/`, but it loads there without its styles and scripts, because the site expects to sit at the root of its domain.
-7. **Remove the domain from Vercel.** Remove `lascel.com` and `www.lascel.com` from the Vercel project, so Vercel stops answering for the domain.
-
-Keep the GitHub Pages records set to DNS only, and keep Cloudflare's Web Analytics, Zaraz and Bot Fight Mode off for this domain: each can add a script or a cookie, or pass visitors' details through Cloudflare. If a proxy or CDN is ever put in front of GitHub Pages, update the privacy notice (`app/privacy/page.tsx`) in the same change.
+- Keep these records set to **DNS only** (grey cloud), not Proxied. A proxied record puts Cloudflare between visitors and the site.
+- Leave the `MX` and `TXT` records (email and domain verification) as they are.
+- Keep Cloudflare's Web Analytics, Zaraz and Bot Fight Mode off for this domain, and Vercel's Web Analytics and Speed Insights off for the project. Each can add a script or a cookie, which the privacy notice says the site does not have.
 
 ## How it works
 
 - `site.config.ts` holds the values that may change: the address, contact email, registered details and the VAYRENO link.
 - `app/layout.tsx` is the root layout: the font, the site-wide metadata, the skip link, the header and the footer.
-- `app/page.tsx` is the home page and its Organization structured data. `app/privacy/page.tsx` is the privacy notice. `app/not-found.tsx` is the 404 page, which the build writes to `out/404.html` for GitHub Pages.
+- `app/page.tsx` is the home page and its Organization structured data. `app/privacy/page.tsx` is the privacy notice. `app/not-found.tsx` is the 404 page, which the build writes to `out/404.html`; Vercel serves it for any missing path.
 - `app/lib/metadata.ts` builds each page's title, description, canonical link and share cards. The share picture is `public/og.png` (1200 by 630 pixels); replace that file to change it.
 - `app/robots.ts` and `app/sitemap.ts` are written to `out/robots.txt` and `out/sitemap.xml` at build time.
 - `app/favicon.ico`, `app/icon.png` and `app/apple-icon.png` are the icons, made from the existing Lascel "L" mark; Next.js adds the matching tags. `public/lascel-logo.png` is the wordmark, used as the logo in the structured data.
@@ -103,12 +93,12 @@ Keep the GitHub Pages records set to DNS only, and keep Cloudflare's Web Analyti
 
 ```text
 .
-├── .github/workflows/   Build checks and the GitHub Pages publish
+├── .github/workflows/   The build check
 ├── app/                 Pages, layout, metadata files, icons and styles
 │   ├── components/      Header, footer, and the helper that lets addresses wrap at their dots
 │   ├── lib/             Page metadata helper
 │   └── privacy/         Privacy notice
-├── public/              Logo, share picture, CNAME and .nojekyll, copied into the build as they are
+├── public/              Logo and share picture, copied into the build as they are
 ├── scripts/preview.mjs  Local static server for out/
 ├── site.config.ts       Contact address, registered details and other settings
 └── AGENTS.md            Notes for AI coding assistants (CLAUDE.md points here)

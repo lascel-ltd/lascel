@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
+import { site } from "@/site.config";
 
-const SITE_URL = "https://lascel.com";
+// Written to out/robots.txt at build time.
+export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,7 +10,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
+    sitemap: `${site.url}/sitemap.xml`,
   };
 }

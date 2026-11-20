@@ -1,150 +1,125 @@
-import AboutSection from "./components/about-section";
-import CompaniesCarousel from "./components/companies-carousel";
-import ContactModalController from "./components/contact-modal-controller";
-import HeroSection from "./components/hero-section";
-import SocialLinks from "./components/social-links";
+import type { Metadata } from "next";
+import { site, siteDescription } from "@/site.config";
+import { pageMetadata } from "./lib/metadata";
 
-const organizationStructuredData = {
+export const metadata: Metadata = pageMetadata({ path: "/" });
+
+/*
+  Every statement about VAYRENO on this page comes from VAYRENO's approved
+  wording (its sales site and its claims register). Check the claims register
+  before adding to it: no results, figures, clients, prices or promises.
+*/
+
+const organization = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Lascel",
-  url: "https://lascel.com",
-  logo: "https://lascel.com/lascel-logo.png",
-  description:
-    "Lascel builds practical AI ventures across operations, customer communication, and digital business systems.",
+  name: site.name,
+  url: `${site.url}/`,
+  logo: `${site.url}/lascel-logo.png`,
+  description: siteDescription,
+  ...(site.contactEmail ? { email: site.contactEmail } : {}),
 };
 
-export default function Home() {
-  const currentYear = new Date().getFullYear();
-
+function Vayreno() {
   return (
-    <main className="relative overflow-x-clip bg-white text-zinc-900">
+    <span className="caps" translate="no">
+      {site.vayreno.name}
+    </span>
+  );
+}
+
+export default function Home() {
+  return (
+    <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationStructuredData),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
       />
 
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="ambient-orb ambient-orb-left" />
-        <div className="ambient-orb ambient-orb-right" />
-      </div>
+      <div className="wrap">
+        <section className="hero">
+          <h1>
+            The software company behind <Vayreno />.
+          </h1>
+          <p className="lede">
+            {site.name} is a small, new company based in {site.location}. <Vayreno /> is the one
+            product we make.
+          </p>
+        </section>
 
-      <HeroSection />
-      <AboutSection />
-
-      <section
-        id="companies"
-        className="min-h-screen border-t border-zinc-200 bg-zinc-50/40"
-      >
-        <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-12 sm:px-8 sm:py-16 lg:px-12">
-          <div className="mb-8 sm:mb-10 reveal-up">
-            <div className="inline-grid w-fit">
-              <p className="font-display w-fit text-base italic uppercase tracking-[0.18em] text-zinc-500">
-                Subsidiaries
-              </p>
-              <div className="line-shimmer mt-3 h-px w-full overflow-hidden bg-zinc-200" />
-            </div>
-          </div>
-
-          <CompaniesCarousel />
-        </div>
-      </section>
-
-      <section id="contact" className="border-t border-zinc-200">
-        <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-12 sm:px-8 sm:py-16 lg:px-12">
-          <div className="grid gap-10 reveal-up lg:grid-cols-[1fr_auto] lg:items-end">
-            <div className="max-w-3xl">
-              <div className="inline-grid w-fit">
-                <p className="font-display w-fit text-base italic uppercase tracking-[0.18em] text-zinc-500">
-                  Contact
-                </p>
-                <div className="line-shimmer mt-3 h-px w-full overflow-hidden bg-zinc-200" />
-              </div>
-              <h2 className="font-display mt-3 text-4xl leading-tight tracking-tight sm:text-5xl">
-                Get Involved
+        <section id="vayreno" className="plate" aria-labelledby="vayreno-title">
+          <div className="columns">
+            <div>
+              <h2 id="vayreno-title" translate="no">
+                {site.vayreno.name}
               </h2>
-              <p className="mt-6 max-w-xl leading-7 text-zinc-600">
-                Use the form to get involved, report an issue, or discuss a partnership.
-                We review each message quickly and will reply as soon as possible.
-              </p>
-
-              <a
-                href="mailto:contact@lascel.com"
-                className="mt-6 inline-flex text-sm font-semibold text-zinc-900 underline underline-offset-4 transition-transform duration-200 hover:-translate-y-0.5"
-              >
-                contact@lascel.com
-              </a>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                {[
-                  { label: "Get involved", icon: ">" },
-                  { label: "Report an issue", icon: ">" },
-                  { label: "Partnerships", icon: ">" },
-                ].map((item) => (
-                  <span
-                    key={item.label}
-                    className="inline-flex items-center gap-2 rounded-full border border-zinc-300/90 bg-white/70 px-4 py-2 text-sm text-zinc-700 backdrop-blur-sm transition-transform duration-200 hover:-translate-y-0.5 hover:scale-[1.02] hover:border-zinc-900"
-                  >
-                    <span aria-hidden>{item.icon}</span>
-                    {item.label}
-                  </span>
-                ))}
-              </div>
+              <p className="tagline">Patient enquiry and booking support for UK private clinics.</p>
             </div>
-
-            <button
-              type="button"
-              data-contact-trigger
-              className="btn btn-neutral btn-lg contact-cta-pulse h-16 w-full rounded-full px-12 text-lg shadow-[0_14px_30px_-20px_rgba(24,24,27,0.75)] transition-transform duration-200 hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[0.98] sm:w-auto"
-            >
-              Contact us
-            </button>
+            <div className="body">
+              <p>
+                A decision about treatment belongs to the patient and their clinician. <Vayreno />{" "}
+                handles the administration around it and nothing more.
+              </p>
+              <p>
+                Clinical questions go to the clinic&rsquo;s own team, and <Vayreno />
+                &rsquo;s assistant never gives medical advice.
+              </p>
+              <a className="button" href={site.vayreno.url}>
+                Visit {site.vayreno.displayUrl}
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="border-t border-zinc-200">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-8 reveal-up sm:px-8 lg:px-12">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm text-zinc-600">
-              &copy; {currentYear} Lascel. All rights reserved.
-            </p>
-            <SocialLinks />
+        <section id="approach" className="section" aria-labelledby="approach-title">
+          <div className="columns">
+            <h2 id="approach-title">How we work</h2>
+            <div className="body">
+              <p>
+                We build <Vayreno /> and run it ourselves. The people who write the software are
+                the people who answer for it.
+              </p>
+              <p>
+                Private healthcare is a regulated setting, so we work carefully and in small steps.
+                We say plainly what the service does, and what it does not do.
+              </p>
+            </div>
           </div>
+        </section>
 
-          <nav className="flex flex-wrap items-center gap-5 text-sm text-zinc-600">
-            <a
-              href="#about"
-              className="transition-transform duration-200 hover:-translate-y-0.5 hover:text-zinc-900"
-            >
-              About
-            </a>
-            <a
-              href="#companies"
-              className="transition-transform duration-200 hover:-translate-y-0.5 hover:text-zinc-900"
-            >
-              Companies
-            </a>
-            <button
-              type="button"
-              data-contact-trigger
-              className="transition-transform duration-200 hover:-translate-y-0.5 hover:text-zinc-900"
-            >
-              Contact
-            </button>
-            <a
-              href="#"
-              className="transition-transform duration-200 hover:-translate-y-0.5 hover:text-zinc-900"
-            >
-              Back to top
-            </a>
-          </nav>
-        </div>
-      </footer>
-
-      <ContactModalController />
-    </main>
+        <section id="contact" className="section" aria-labelledby="contact-title">
+          <div className="columns">
+            <h2 id="contact-title">Contact</h2>
+            <div className="body">
+              {site.contactEmail ? (
+                <>
+                  <p>
+                    <a className="link email" href={`mailto:${site.contactEmail}`}>
+                      {site.contactEmail}
+                    </a>
+                  </p>
+                  <p>
+                    Clinics that want to know more about <Vayreno /> will find the details, and a
+                    way to get in touch, at{" "}
+                    <a className="link" href={site.vayreno.url}>
+                      {site.vayreno.displayUrl}
+                    </a>
+                    .
+                  </p>
+                </>
+              ) : (
+                <p>
+                  To get in touch, please use{" "}
+                  <a className="link" href={site.vayreno.url}>
+                    {site.vayreno.displayUrl}
+                  </a>
+                  .
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }

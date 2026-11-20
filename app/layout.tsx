@@ -1,83 +1,44 @@
-import type { Metadata } from "next";
-import { Geist_Mono, Manrope } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Newsreader } from "next/font/google";
+import { site, siteDescription } from "@/site.config";
+import SiteFooter from "./components/site-footer";
+import SiteHeader from "./components/site-header";
+import { homeTitle, shareImage } from "./lib/metadata";
 import "./globals.css";
 
-const SITE_URL = "https://lascel.com";
-const SITE_NAME = "Lascel";
-const SITE_DESCRIPTION =
-  "Lascel builds practical AI ventures across operations, customer communication, and digital business systems.";
-
-const manrope = Manrope({
-  variable: "--font-manrope",
+// Downloaded at build time and served from this site: visitors' browsers never contact Google.
+const newsreader = Newsreader({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  axes: ["opsz"],
+  style: "normal",
+  display: "swap",
+  variable: "--font-newsreader",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(site.url),
   title: {
-    default: `${SITE_NAME} | Practical Ventures`,
-    template: `%s | ${SITE_NAME}`,
+    default: homeTitle,
+    template: `%s | ${site.name}`,
   },
-  description: SITE_DESCRIPTION,
-  applicationName: SITE_NAME,
-  keywords: [
-    "Lascel",
-    "AI ventures",
-    "holding company",
-    "DeskCaptain",
-    "Flotrafic",
-    "AI receptionist",
-    "business operations",
-  ],
-  authors: [{ name: SITE_NAME }],
-  creator: SITE_NAME,
-  publisher: SITE_NAME,
-  alternates: {
-    canonical: "/",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+  description: siteDescription,
+  applicationName: site.name,
   openGraph: {
     type: "website",
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    title: `${SITE_NAME} | Practical AI Ventures`,
-    description: SITE_DESCRIPTION,
+    siteName: site.name,
     locale: "en_GB",
-    images: [
-      {
-        url: "/lascel.png",
-        width: 1200,
-        height: 630,
-        alt: "Lascel brand preview",
-      },
-    ],
+    images: [shareImage],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: `${SITE_NAME} | Practical AI Ventures`,
-    description: SITE_DESCRIPTION,
-    images: ["/lascel.png"],
-  },
-  icons: {
-    icon: [{ url: "/favicon.ico" }],
-    apple: [{ url: "/favicon.ico" }],
-  },
-  category: "technology",
+  twitter: { card: "summary_large_image", images: [shareImage] },
+  formatDetection: { telephone: false, address: false, email: false },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d121b" },
+  ],
 };
 
 export default function RootLayout({
@@ -86,12 +47,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${manrope.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
-    >
-      <body className="min-h-full flex flex-col bg-white text-zinc-900">
-        {children}
+    <html lang="en-GB" className={newsreader.variable}>
+      <body>
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

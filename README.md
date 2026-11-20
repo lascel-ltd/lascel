@@ -7,13 +7,14 @@ The site is two pages and a 404 page:
 - `/`: what Lascel is, a short section on VAYRENO with a link to its website, and contact.
 - `/privacy/`: what the site does with visitors' information.
 
-It is a fully static build. There is no server, no form, no cookie, no analytics and no third-party script, font or image. The font (Newsreader) is downloaded at build time and served from the site itself.
+It is a fully static build. There is no server and no form, and nothing is loaded from another website. The font (Newsreader) is downloaded at build time and served from the site itself. Vercel Web Analytics counts visits only after a visitor agrees, and the site's one cookie remembers that answer (see "Cookies and analytics" below).
 
 ## Tech stack
 
 - Next.js 16 (App Router) with `output: "export"`, React 19 and TypeScript
 - Tailwind CSS 4 for the CSS reset and build; the design lives in `app/globals.css`
 - `next/font/google` for the self-hosted font
+- `@vercel/analytics` for Vercel Web Analytics, loaded only after consent
 - ESLint 9 with `eslint-config-next`
 - Vercel for hosting, and GitHub Actions for the build check
 
@@ -68,12 +69,23 @@ The domain's DNS is on Cloudflare. `www.lascel.com` is a `CNAME` record to the a
 
 - Keep these records set to **DNS only** (grey cloud), not Proxied. A proxied record puts Cloudflare between visitors and the site.
 - Leave the `MX` and `TXT` records (email and domain verification) as they are.
-- Keep Cloudflare's Web Analytics, Zaraz and Bot Fight Mode off for this domain, and Vercel's Web Analytics and Speed Insights off for the project. Each can add a script or a cookie, which the privacy notice says the site does not have.
+- Keep Cloudflare's Web Analytics, Zaraz and Bot Fight Mode off for this domain, and Vercel's Speed Insights off for the project. Each can add a script or a cookie that the privacy notice does not describe.
+- Keep Vercel's Web Analytics on for the project (Analytics, then Enable, in the Vercel dashboard; it takes effect from the next deployment). The site loads its script only after a visitor agrees. While it is off, the script's address answers 404 and nothing is counted.
+
+## Cookies and analytics
+
+The site counts visits with Vercel Web Analytics, and only after the visitor agrees.
+
+- `app/components/consent-notice.tsx` shows a notice at the bottom of every page until the visitor answers "Accept analytics" or "No thanks". After a yes it loads `@vercel/analytics`, which is fetched only then, so before a yes and after a no nothing from the package is requested or run. It runs in production mode, so the script always comes from the site's own address: `/_vercel/insights/script.js`, or a project path that Vercel sets when it builds the site.
+- `app/lib/consent.ts` keeps the answer in the site's only cookie, `lascel_consent` (`analytics=granted` or `analytics=denied`; 180 days; `Path=/`, `SameSite=Lax`, `Secure`). After 180 days the notice asks again. A browser that sends Global Privacy Control, with no answer stored, counts as a no and is not asked.
+- `app/components/cookie-settings.tsx` is Cookie settings in the footer of every page. It brings the notice back so the answer can be changed. A change to no stops the analytics at once: the analytics' `beforeSend` drops every page view unless the cookie says yes.
+- The privacy notice describes all of this under "Cookies and analytics" (`/privacy/#cookies`). Change it in the same commit as any change here.
+- There are no Speed Insights, no custom events and no other tracker.
 
 ## How it works
 
 - `site.config.ts` holds the values that may change: the address, contact email, registered details and the VAYRENO link.
-- `app/layout.tsx` is the root layout: the font, the site-wide metadata, the skip link, the header and the footer.
+- `app/layout.tsx` is the root layout: the font, the site-wide metadata, the skip link, the header, the footer and the consent notice.
 - `app/page.tsx` is the home page and its Organization structured data. `app/privacy/page.tsx` is the privacy notice. `app/not-found.tsx` is the 404 page, which the build writes to `out/404.html`; Vercel serves it for any missing path.
 - `app/lib/metadata.ts` builds each page's title, description, canonical link and share cards. The share picture is `public/og.png` (1200 by 630 pixels); replace that file to change it.
 - `app/robots.ts` and `app/sitemap.ts` are written to `out/robots.txt` and `out/sitemap.xml` at build time.
@@ -86,7 +98,7 @@ The domain's DNS is on Cloudflare. `www.lascel.com` is a `CNAME` record to the a
 
 - Every statement about VAYRENO comes from VAYRENO's approved wording and must pass its claims register: no results, figures, client names, testimonials, prices, guarantees or urgency, and nothing clinical.
 - Name no other company or product.
-- Keep the privacy notice true. If the site ever adds a cookie, a form, analytics, a third-party resource or a different host, change the notice in the same commit.
+- Keep the privacy notice true. If the site ever adds another cookie, a form, other analytics, a resource from another website or a different host, or changes how the consent notice or the analytics work, change the notice in the same commit.
 - Plain UK English, short sentences, no hype words, no em dashes.
 
 ## Project structure
@@ -95,8 +107,8 @@ The domain's DNS is on Cloudflare. `www.lascel.com` is a `CNAME` record to the a
 .
 ├── .github/workflows/   The build check
 ├── app/                 Pages, layout, metadata files, icons and styles
-│   ├── components/      Header, footer, and the helper that lets addresses wrap at their dots
-│   ├── lib/             Page metadata helper
+│   ├── components/      Header, footer, consent notice, Cookie settings, and the helper that lets addresses wrap at their dots
+│   ├── lib/             Page metadata helper and the consent state
 │   └── privacy/         Privacy notice
 ├── public/              Logo and share picture, copied into the build as they are
 ├── scripts/preview.mjs  Local static server for out/

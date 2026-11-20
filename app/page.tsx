@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site, siteDescription } from "@/site.config";
+import Breakable from "./components/breakable";
 import { pageMetadata } from "./lib/metadata";
 
 export const metadata: Metadata = pageMetadata({ path: "/" });
@@ -8,6 +9,14 @@ export const metadata: Metadata = pageMetadata({ path: "/" });
   Every statement about VAYRENO on this page comes from VAYRENO's approved
   wording (its sales site and its claims register). Check the claims register
   before adding to it: no results, figures, clients, prices or promises.
+  - The tagline is the sales site's page title.
+  - "It handles patient enquiries and books consultations, never treatment."
+    joins the sales site's opening sentence to its safeguard "It books
+    consultations, never treatment."
+  - The clinical questions sentence is claims register row C-04 (Approved).
+  Answering calls, inviting past enquirers back and response times are
+  Conditional in the register, and reporting (C-06) may only appear beside its
+  metric definitions, so none of them is on this page.
 */
 
 const organization = {
@@ -56,33 +65,14 @@ export default function Home() {
               <p className="tagline">Patient enquiry and booking support for UK private clinics.</p>
             </div>
             <div className="body">
-              <p>
-                A decision about treatment belongs to the patient and their clinician. <Vayreno />{" "}
-                handles the administration around it and nothing more.
-              </p>
+              <p>It handles patient enquiries and books consultations, never treatment.</p>
               <p>
                 Clinical questions go to the clinic&rsquo;s own team, and <Vayreno />
                 &rsquo;s assistant never gives medical advice.
               </p>
               <a className="button" href={site.vayreno.url}>
-                Visit {site.vayreno.displayUrl}
+                Visit <Breakable text={site.vayreno.displayUrl} />
               </a>
-            </div>
-          </div>
-        </section>
-
-        <section id="approach" className="section" aria-labelledby="approach-title">
-          <div className="columns">
-            <h2 id="approach-title">How we work</h2>
-            <div className="body">
-              <p>
-                We build <Vayreno /> and run it ourselves. The people who write the software are
-                the people who answer for it.
-              </p>
-              <p>
-                Private healthcare is a regulated setting, so we work carefully and in small steps.
-                We say plainly what the service does, and what it does not do.
-              </p>
             </div>
           </div>
         </section>
@@ -95,14 +85,14 @@ export default function Home() {
                 <>
                   <p>
                     <a className="link email" href={`mailto:${site.contactEmail}`}>
-                      {site.contactEmail}
+                      <Breakable text={site.contactEmail} />
                     </a>
                   </p>
                   <p>
                     Clinics that want to know more about <Vayreno /> will find the details, and a
                     way to get in touch, at{" "}
                     <a className="link" href={site.vayreno.url}>
-                      {site.vayreno.displayUrl}
+                      <Breakable text={site.vayreno.displayUrl} />
                     </a>
                     .
                   </p>
@@ -111,7 +101,7 @@ export default function Home() {
                 <p>
                   To get in touch, please use{" "}
                   <a className="link" href={site.vayreno.url}>
-                    {site.vayreno.displayUrl}
+                    <Breakable text={site.vayreno.displayUrl} />
                   </a>
                   .
                 </p>

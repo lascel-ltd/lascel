@@ -12,6 +12,9 @@ export const site = {
    * The public contact address. Use a mailbox that someone reads.
    * Set it to null to remove the address everywhere: the contact section then
    * points visitors to the VAYRENO website instead.
+   * The privacy notice gives this address as the way to ask about personal
+   * information, and it must always offer a way to contact us. With null it
+   * points to the VAYRENO website too, so keep an address here if you can.
    */
   contactEmail: "contact@lascel.com" as string | null,
 
@@ -34,4 +37,4 @@ export const site = {
 };
 
 export const siteDescription =
-  "Lascel is a small software company in Birmingham. It builds and runs VAYRENO, which handles patient enquiries and bookings for UK private clinics.";
+  "Lascel is a small software company in Birmingham. It is the company behind VAYRENO, which handles patient enquiries and bookings for UK private clinics.";

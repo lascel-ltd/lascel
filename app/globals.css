@@ -26,7 +26,8 @@
   --serif: var(--font-newsreader), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --gutter: 1rem;
   --bleed: 1rem;
-  --measure: 34em;
+  /* Keeps body lines to about 70 characters at every width. */
+  --measure: 29em;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -158,6 +159,9 @@
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.18em;
+    /* Addresses wrap at their dots first (see components/breakable.tsx). If a piece still does not
+       fit, on a narrow screen with enlarged text, it breaks rather than running off the screen. */
+    overflow-wrap: anywhere;
   }
 
   .link:hover {
@@ -172,14 +176,25 @@
   /* Header */
 
   .site-header {
-    padding-block: 1.25rem;
+    padding-block: 0.875rem;
   }
 
   .site-header .wrap {
     display: flex;
+    /* Wraps only on a very narrow screen with enlarged text: Contact then sits under the name. */
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0 1rem;
+  }
+
+  /* The links in the header and footer are at least 44px tall, so they are easy to tap. */
+  .wordmark,
+  .site-nav a,
+  .site-footer ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
   }
 
   .wordmark {
@@ -191,8 +206,6 @@
   }
 
   .site-nav a {
-    display: inline-block;
-    padding-block: 0.25rem;
     font-size: 1.0625rem;
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
@@ -205,12 +218,15 @@
 
   @media (min-width: 64rem) {
     .site-header {
-      padding-block: 2rem;
+      padding-block: 1.625rem;
     }
   }
 
   main {
     flex: 1;
+    /* With text enlarged and the page not zoomed, the coloured band can be wider than the
+       screen. Clip it at the screen edge rather than let the page scroll sideways. */
+    overflow-x: clip;
   }
 
   /* Home: the statement */
@@ -221,9 +237,11 @@
 
   .hero h1 {
     max-width: 12em;
-    font-size: clamp(2.75rem, 1.6rem + 5vw, 6.25rem);
+    /* The vw cap only takes effect when text is enlarged: it keeps "VAYRENO." on the screen. */
+    font-size: min(clamp(2.75rem, 1.6rem + 5vw, 6.25rem), 17vw);
     font-weight: 400;
-    line-height: 1.02;
+    /* Not below 1.08, or descenders on one line touch capitals on the next. */
+    line-height: 1.1;
     letter-spacing: -0.022em;
   }
 
@@ -259,7 +277,8 @@
   }
 
   .plate h2 {
-    font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
+    /* As for the h1: the vw cap only takes effect when text is enlarged. */
+    font-size: min(clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem), 13vw);
     font-weight: 500;
     line-height: 1;
     letter-spacing: 0.04em;
@@ -292,6 +311,8 @@
     font-size: 1.125rem;
     font-weight: 500;
     text-decoration: none;
+    /* As for .link: the address wraps rather than widening the band. */
+    overflow-wrap: anywhere;
   }
 
   .button:hover {
@@ -331,6 +352,9 @@
   }
 
   .email {
+    /* Stands alone in its paragraph, so it gets a taller tap area than a link in a sentence. */
+    display: inline-block;
+    padding-block: 0.5rem;
     font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
     line-height: 1.3;
     overflow-wrap: anywhere;
@@ -416,12 +440,10 @@
   .site-footer ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 1.5rem;
+    gap: 0 1.5rem;
   }
 
   .site-footer ul a {
-    display: inline-block;
-    padding-block: 0.25rem;
     color: var(--ink);
     text-decoration-line: underline;
     text-decoration-thickness: 1px;

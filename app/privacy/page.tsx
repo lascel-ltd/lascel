@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/site.config";
+import Breakable from "../components/breakable";
 import { pageMetadata } from "../lib/metadata";
 
 export const metadata: Metadata = pageMetadata({
@@ -11,6 +12,8 @@ export const metadata: Metadata = pageMetadata({
 /*
   Keep this page true. It must change if the site ever adds a cookie, a form,
   analytics, a third-party script, font or image, or a different host.
+  It must always give a way to contact us: the address in site.config.ts, or
+  the VAYRENO website when the address is null.
 */
 
 const updated = new Date(`${site.lastUpdated}T00:00:00Z`).toLocaleDateString("en-GB", {
@@ -19,6 +22,22 @@ const updated = new Date(`${site.lastUpdated}T00:00:00Z`).toLocaleDateString("en
   year: "numeric",
   timeZone: "UTC",
 });
+
+function EmailLink({ email }: { email: string }) {
+  return (
+    <a className="link" href={`mailto:${email}`}>
+      <Breakable text={email} />
+    </a>
+  );
+}
+
+function VayrenoLink() {
+  return (
+    <a className="link" href={site.vayreno.url}>
+      <Breakable text={site.vayreno.displayUrl} />
+    </a>
+  );
+}
 
 export default function Privacy() {
   return (
@@ -34,6 +53,21 @@ export default function Privacy() {
       </header>
 
       <div className="prose">
+        <h2>Who we are</h2>
+        <p>
+          This website is run by {site.name}, a small software company in {site.location}.{" "}
+          {site.contactEmail ? (
+            <>
+              You can contact us at <EmailLink email={site.contactEmail} />.
+            </>
+          ) : (
+            <>
+              You can contact us through <VayrenoLink />.
+            </>
+          )}
+        </p>
+        {site.registeredDetails ? <p>{site.registeredDetails}</p> : null}
+
         <h2>What the site does not do</h2>
         <ul>
           <li>It sets no cookies.</li>
@@ -53,27 +87,41 @@ export default function Privacy() {
         </p>
 
         <h2>If you email us</h2>
-        {site.contactEmail ? (
-          <p>
-            If you write to{" "}
-            <a className="link" href={`mailto:${site.contactEmail}`}>
-              {site.contactEmail}
-            </a>
-            , we use your email address and your message only to reply to you.
-          </p>
-        ) : (
-          <p>
-            If you write to us, we use your email address and your message only to reply to you.
-          </p>
-        )}
+        <p>
+          If you email us, we use your email address and your message to reply to you and to deal
+          with what you asked about. We do this because it is in our legitimate interests to answer
+          people who write to us. Our email provider stores the messages for us. We delete them when
+          we no longer need them for that purpose.
+        </p>
+
+        <h2>Your rights</h2>
+        <p>
+          You can ask for a copy of the information we hold about you. You can also ask us to
+          correct it, delete it or limit how we use it, and you can object to our using it. To do
+          any of these,{" "}
+          {site.contactEmail ? (
+            <>
+              write to <EmailLink email={site.contactEmail} />.
+            </>
+          ) : (
+            <>
+              get in touch through <VayrenoLink />.
+            </>
+          )}
+        </p>
+        <p>
+          If you are unhappy with how we have handled your information, you can complain to the
+          Information Commissioner&rsquo;s Office at{" "}
+          <a className="link" href="https://ico.org.uk/make-a-complaint/">
+            ico.org.uk
+          </a>
+          .
+        </p>
 
         <h2>Other websites</h2>
         <p>
-          This site links to{" "}
-          <a className="link" href={site.vayreno.url}>
-            {site.vayreno.displayUrl}
-          </a>
-          . That website is separate and has its own privacy notice.
+          This site links to <VayrenoLink /> and to the Information Commissioner&rsquo;s Office.
+          Those websites are separate and have their own privacy notices.
         </p>
       </div>
     </div>

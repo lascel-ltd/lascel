@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { site } from "@/site.config";
 
 export default function SiteFooter() {
@@ -23,7 +22,8 @@ export default function SiteFooter() {
                 </a>
               </li>
               <li>
-                <Link href="/privacy/">Privacy</Link>
+                {/* A plain link, not <Link>: the new page opens at the top with keyboard focus there too. */}
+                <a href="/privacy/">Privacy</a>
               </li>
             </ul>
           </nav>

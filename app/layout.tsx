@@ -47,7 +47,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-GB" className={newsreader.variable}>
+    // data-scroll-behavior: globals.css scrolls smoothly within a page. This tells Next.js to
+    // jump, not glide, to the top when it opens another page, so a page never opens part-way down.
+    <html lang="en-GB" className={newsreader.variable} data-scroll-behavior="smooth">
       <body>
         <a href="#main" className="skip-link">
           Skip to content

@@ -9,7 +9,8 @@ export default function SiteHeader() {
           {site.name}
         </Link>
         <nav className="site-nav" aria-label="Main">
-          <Link href="/#contact">Contact</Link>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- a plain link moves keyboard focus to #contact; <Link> leaves it in the header */}
+          <a href="/#contact">Contact</a>
         </nav>
       </div>
     </header>

@@ -1,77 +1,80 @@
-name: CI and Production Deploy
+name: Build and publish
+
+# Pull requests to main: install, lint, type-check and build.
+# Pushes to main, and manual runs on main: the same, then publish out/ to GitHub Pages.
+# GitHub Pages must be set to deploy from GitHub Actions (Settings > Pages > Source).
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
 
-concurrency:
-  group: production-deploy
-  cancel-in-progress: true
+permissions:
+  contents: read
 
 jobs:
-  ci:
-    name: Build and verify
+  build:
+    name: Lint, type-check and build
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+    concurrency:
+      # A newer commit on the same pull request cancels the older run.
+      group: build-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Check out the code
+        uses: actions/checkout@v7
         with:
-          node-version: 20
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Lint
-        run: npm run lint --if-present
+        run: npm run lint
 
-      - name: Run tests
-        run: npm test --if-present
+      - name: Type-check
+        run: npm run typecheck
 
-      - name: Build app
+      - name: Build the static site
         run: npm run build
 
-  deploy:
-    name: Deploy to production
-    runs-on: ubuntu-latest
-    needs: ci
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Upload the site for GitHub Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            set -e
+          path: out
+          # Keep public/.nojekyll in the published files.
+          include-hidden-files: true
 
-            cd ~/lascel-site
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      # One deployment at a time. A deployment in progress is never cancelled.
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Check the GitHub Pages settings
+        uses: actions/configure-pages@v6
 
-            echo "Fetching latest code..."
-            git fetch origin main
-            git reset --hard origin/main
-
-            echo "Installing dependencies..."
-            npm ci
-
-            echo "Building application..."
-            npm run build
-
-            echo "Restarting PM2 process..."
-            pm2 restart lascel
-
-            echo "Reloading Nginx..."
-            sudo systemctl reload nginx
-
-            echo "Production deploy complete."
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v5

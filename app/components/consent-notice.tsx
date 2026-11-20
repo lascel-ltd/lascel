@@ -18,6 +18,16 @@ const Analytics = dynamic(() => import("@vercel/analytics/next").then((mod) => m
   ssr: false,
 });
 
+/** Focus that came from the keyboard, which browsers mark with :focus-visible. */
+function focusFromKeyboard(element: Element) {
+  try {
+    return element.matches(":focus-visible");
+  } catch {
+    // A browser too old to know :focus-visible: treat the focus as keyboard focus.
+    return true;
+  }
+}
+
 /**
  * The consent notice, at the bottom of every page until the visitor answers, and the
  * analytics, which loads only after a yes. Cookie settings in the footer brings the notice back.
@@ -64,6 +74,9 @@ export default function ConsentNotice() {
       requestAnimationFrame(() => {
         // Not once the notice has closed, as it does when an answer moves focus to Cookie settings.
         if (!open || !element.isConnected || slot.hasAttribute("data-static")) return;
+        // Only focus from the keyboard. A mouse press focuses a link in some browsers, and
+        // moving the page before the button comes up would send the click somewhere else.
+        if (!focusFromKeyboard(target)) return;
         const overlap = target.getBoundingClientRect().bottom - element.getBoundingClientRect().top;
         if (overlap > 0) window.scrollBy({ top: overlap + 16, behavior: "instant" });
       });
@@ -82,10 +95,23 @@ export default function ConsentNotice() {
     };
   }, [notice]);
 
-  function answerWith(choice: Answer) {
+  function answerWith(choice: Answer, button: HTMLButtonElement) {
+    const byKeyboard = focusFromKeyboard(button);
     giveAnswer(choice);
     // The notice closes. Focus moves to Cookie settings, the control that brings it back.
-    document.getElementById("cookie-settings")?.focus({ preventScroll: true });
+    const settings = document.getElementById("cookie-settings");
+    if (!settings) return;
+    settings.focus({ preventScroll: true });
+    // After an answer from the keyboard, bring Cookie settings into view once the notice has
+    // gone, so the focus can be seen. A click or tap leaves the page where it is.
+    if (byKeyboard) {
+      requestAnimationFrame(() => {
+        const box = settings.getBoundingClientRect();
+        if (box.top < 8 || box.bottom > window.innerHeight - 8) {
+          settings.scrollIntoView({ block: "center" });
+        }
+      });
+    }
   }
 
   let current: string | null = null;
@@ -119,14 +145,14 @@ export default function ConsentNotice() {
                 <button
                   type="button"
                   className="consent-button"
-                  onClick={() => answerWith("granted")}
+                  onClick={(event) => answerWith("granted", event.currentTarget)}
                 >
                   Accept analytics
                 </button>
                 <button
                   type="button"
                   className="consent-button"
-                  onClick={() => answerWith("denied")}
+                  onClick={(event) => answerWith("denied", event.currentTarget)}
                 >
                   No thanks
                 </button>

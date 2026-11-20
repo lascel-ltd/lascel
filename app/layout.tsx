@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Newsreader } from "next/font/google";
 import { site, siteDescription } from "@/site.config";
+import ConsentNotice from "./components/consent-notice";
 import SiteFooter from "./components/site-footer";
 import SiteHeader from "./components/site-header";
 import { homeTitle, shareImage } from "./lib/metadata";
@@ -57,6 +58,7 @@ export default function RootLayout({
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
+        <ConsentNotice />
       </body>
     </html>
   );

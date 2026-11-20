@@ -1,4 +1,5 @@
 import { site } from "@/site.config";
+import CookieSettings from "./cookie-settings";
 
 export default function SiteFooter() {
   // The site is built ahead of time, so this is the year of the last build.
@@ -25,6 +26,7 @@ export default function SiteFooter() {
                 {/* A plain link, not <Link>: the new page opens at the top with keyboard focus there too. */}
                 <a href="/privacy/">Privacy</a>
               </li>
+              <CookieSettings />
             </ul>
           </nav>
         </div>

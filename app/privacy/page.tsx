@@ -13,7 +13,9 @@ export const metadata: Metadata = pageMetadata({
   Keep this page true. It must change if the site ever adds another cookie, a
   form, other analytics, a script, font or image from another website, or a
   different host. "Cookies and analytics" describes app/lib/consent.ts and
-  app/components/consent-notice.tsx: change them together.
+  app/components/consent-notice.tsx: change them together. How long Vercel
+  keeps the figures comes from Vercel's "Pricing for Web Analytics" page (the
+  reporting window of each plan): check it if Vercel changes the windows.
   It must always give a way to contact us: the address in site.config.ts, or
   the VAYRENO website when the address is null.
 */
@@ -109,6 +111,11 @@ export default function Privacy() {
           from details of your request. Vercel says it discards that code after 24 hours.
         </p>
         <p>
+          Vercel keeps the figures for at least as long as our plan with Vercel lets us view them.
+          Depending on the plan, that is one month, 12 months or 24 months. Vercel says it may keep
+          them for longer.
+        </p>
+        <p>
           Vercel provides the analytics as our processor. Vercel is a company in the United States,
           so this information may be processed outside the United Kingdom, with the safeguards
           described under Hosting.
@@ -116,11 +123,12 @@ export default function Privacy() {
         <p>
           Our legal basis for the analytics is your consent. You can withdraw it at any time with
           Cookie settings, at the foot of every page. Once you say no, nothing more is counted.
+          Visits counted before then stay in the figures for as long as Vercel keeps them.
         </p>
         <p>
           The site sets one cookie, named lascel_consent. It holds your answer: analytics=granted if
-          you said yes, or analytics=denied if you said no. It lasts 180 days. After that, the notice
-          asks again.
+          you said yes, or analytics=denied if you said no. It lasts up to 180 days. Some browsers,
+          such as Safari, may delete it after 7 days. Once it has gone, the notice asks again.
         </p>
         <p>
           If your browser sends a Global Privacy Control signal and you have not answered, we take

@@ -77,9 +77,10 @@ The domain's DNS is on Cloudflare. `www.lascel.com` is a `CNAME` record to the a
 The site counts visits with Vercel Web Analytics, and only after the visitor agrees.
 
 - `app/components/consent-notice.tsx` shows a notice at the bottom of every page until the visitor answers "Accept analytics" or "No thanks". After a yes it loads `@vercel/analytics`, which is fetched only then, so before a yes and after a no nothing from the package is requested or run. It runs in production mode, so the script always comes from the site's own address: `/_vercel/insights/script.js`, or a project path that Vercel sets when it builds the site.
-- `app/lib/consent.ts` keeps the answer in the site's only cookie, `lascel_consent` (`analytics=granted` or `analytics=denied`; 180 days; `Path=/`, `SameSite=Lax`, `Secure`). After 180 days the notice asks again. A browser that sends Global Privacy Control, with no answer stored, counts as a no and is not asked.
+- `app/lib/consent.ts` keeps the answer in the site's only cookie, `lascel_consent` (`analytics=granted` or `analytics=denied`; `Max-Age` of 180 days; `Path=/`, `SameSite=Lax`, `Secure`). After 180 days the notice asks again. The site has no server, so the cookie is set from script, and Safari may delete a cookie set from script after 7 days; the notice then asks again sooner. That is why the privacy notice says the cookie lasts "up to 180 days". A browser that sends Global Privacy Control, with no answer stored, counts as a no and is not asked.
 - `app/components/cookie-settings.tsx` is Cookie settings in the footer of every page. It brings the notice back so the answer can be changed. A change to no stops the analytics at once: the analytics' `beforeSend` drops every page view unless the cookie says yes.
 - The privacy notice describes all of this under "Cookies and analytics" (`/privacy/#cookies`). Change it in the same commit as any change here.
+- The privacy notice also says how long Vercel keeps the figures: at least the reporting window of the team's Vercel plan (one month on Hobby, 12 months on Pro, 24 months with Web Analytics Plus or on Enterprise, from Vercel's "Pricing for Web Analytics" page), and Vercel says it may keep them longer. Check that sentence if Vercel changes the windows.
 - There are no Speed Insights, no custom events and no other tracker.
 
 ## How it works

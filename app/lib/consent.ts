@@ -2,9 +2,11 @@
   The visitor's answer about analytics, and what the consent notice shows.
 
   The answer is kept in one first-party cookie, the only cookie this site sets:
-  lascel_consent=analytics=granted or lascel_consent=analytics=denied, for 180 days.
-  With no answer stored, the notice asks. If the browser sends Global Privacy Control,
-  that counts as no: the notice does not ask and nothing is stored.
+  lascel_consent=analytics=granted or lascel_consent=analytics=denied, for up to 180 days.
+  The site has no server, so the cookie is set from script, and Safari may delete a cookie
+  set from script after 7 days. With no answer stored, the notice asks. If the browser
+  sends Global Privacy Control, that counts as no: the notice does not ask and nothing
+  is stored.
 
   The privacy notice ("Cookies and analytics" in app/privacy/page.tsx) describes all of
   this. Change the two together.
@@ -17,7 +19,10 @@ export type Answer = "granted" | "denied";
 
 const cookieName = "lascel_consent";
 
-/** 180 days, in seconds. When the cookie expires, the notice asks again. */
+/**
+ * 180 days, in seconds. When the cookie expires, or a browser deletes it sooner, the notice
+ * asks again.
+ */
 const cookieMaxAge = 180 * 24 * 60 * 60;
 
 /** The stored answer, or null when there is none. */
